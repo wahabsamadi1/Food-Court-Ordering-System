@@ -1,12 +1,3 @@
-/* 
-    Author: Wahab Samadi
-    Date: May 25, 2024
-    Description: This program simulates the ordering and billing system of a food court at Ohlone College. 
-    It displays a menu of burgers, allows the user to input their order (number of items and quantity), 
-    calculates the total price including tax, provides an option for adding a tip, and prints a detailed bill 
-    with transaction information. The bill is also saved as a text file for record-keeping.
-*/
-
 #include <iostream>
 #include <iomanip>
 #include <vector>
