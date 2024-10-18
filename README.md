@@ -16,7 +16,7 @@ This project is a C++ program that simulates the ordering and billing system of 
 | 1       | Cheeseburger           | $8.25 |
 | 2       | Veggie Burger          | $9.75 |
 | 3       | Bacon Cheeseburger     | $9.25 |
-| 4       | Mushroom Burger	       | $8.99 |
+| 4       | Mushroom Burger	     | $8.99 |
 | 5       | Bean Burger            | $9.95 |
 
 ### How It Works
