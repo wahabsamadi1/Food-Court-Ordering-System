@@ -32,7 +32,7 @@ To compile and run this program, you will need:
 
 ### How to Run the Program
 1. Clone the Repository:  
-   git clone https://github.com/yourusername/food-court-ordering-system.git  
+   git clone https://github.com/wahabsamadi1/food-court-ordering-system.git  
 2. Navigate to the Project Directory:  
    cd food-court-ordering-system  
 3. Compile the Program: If you are using g++, run:  
