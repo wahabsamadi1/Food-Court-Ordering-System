@@ -17,7 +17,7 @@ private:
     vector<int> quantities = {0, 0, 0, 0, 0};  // Holds quantities of each menu item ordered
 
 public:
-    // Display the food court menu with item numbers, names, and prices
+    // Function to display the food court menu with item numbers, names, and prices
     void displayMenu() {
         cout << "\n=====================================================" << endl;
         cout << "        Welcome to Ohlone College Food Court";
@@ -77,7 +77,7 @@ public:
         }
     }
 
-    // Calculate the total cost of items ordered (without tax)
+    // Function to calculate the total cost of items ordered (without tax)
     float calculateBill() {
         float totalCost = 0.0;
         // Sum up the total cost based on quantities and prices
@@ -87,7 +87,7 @@ public:
         return totalCost;  // Return the total before tax
     }
 
-    // Calculate tax based on whether the user is a student or not
+    // Function to calculate tax based on whether the user is a student or not
     float calculateTax(float totalCost, bool isStudent) {
         if (isStudent) {
             return 0;  // No tax for students
@@ -96,7 +96,7 @@ public:
         }
     }
 
-    // Print the detailed bill including items, taxes, and optional tips
+    // Function to print the detailed bill including items, taxes, and optional tips
     void printBill(bool isStudent) {
         float totalCost = calculateBill();  // Get the total bill before tax
         float tax = calculateTax(totalCost, isStudent);  // Calculate tax based on student status
@@ -186,45 +186,39 @@ public:
         // Loop through items again to save details to the file
         for (int i = 0; i < menuItems.size(); ++i) {
             if (quantities[i] > 0) {
-                outFile << menuItems[i] << " x" << quantities[i] << " - $" << prices[i] * quantities[i] << endl;
+                outFile << left << setw(25) << menuItems[i]
+                        << left << setw(8) << quantities[i]
+                        << right << setw(15) << fixed << setprecision(2) << "$" << prices[i] * quantities[i] << endl;
             }
         }
-
         outFile << "-----------------------------------------------------" << endl;
-        outFile << "Total before tax: $" << totalCost << endl;
-        outFile << "Tax: $" << tax << endl;
-        outFile << "Total after tax: $" << totalCostAfterTax << endl;
-
-        // Save tip details if applicable
+        outFile << "Total before tax: $" << fixed << setprecision(2) << totalCost << endl;
+        outFile << "Tax Amount: $" << fixed << setprecision(2) << tax << endl;
+        outFile << "Total price after tax: $" << fixed << setprecision(2) << totalCostAfterTax << endl;
         if (tip > 0) {
-            outFile << "Tip: $" << tip << endl;
+            outFile << "Tip Amount: $" << fixed << setprecision(2) << tip << endl;
         }
+        outFile << "Total after tip: $" << fixed << setprecision(2) << finalTotal << endl;
+        outFile << "\nThank you for dining with us! Please come again soon!" << endl;
 
-        outFile << "Total after tip: $" << finalTotal << endl;
-        outFile.close();  // Close the file
+        outFile.close();  // Close the file after writing
     }
 };
 
+// Main function that initiates the food ordering process
 int main() {
     FoodCourt foodCourt;  // Create an instance of the FoodCourt class
+    foodCourt.displayMenu();  // Display the menu to the user
+    foodCourt.getInputs();  // Get user's menu choices and quantities
 
-    foodCourt.displayMenu();  // Display the menu
-
+    char isStudentInput;
     bool isStudent;
-    char studentChoice;
+    // Ask the user if they are a student (for tax exemption)
     cout << "\nAre you a student? (y/n): ";
-    cin >> studentChoice;
+    cin >> isStudentInput;
+    // Determine student status based on user's response
+    isStudent = (isStudentInput == 'y' || isStudentInput == 'Y');
 
-    // Input validation: Ensure the user input is 'y' or 'n'
-    while (studentChoice != 'y' && studentChoice != 'n') {
-        cout << "Invalid input. Please enter 'y' or 'n': ";
-        cin >> studentChoice;
-    }
-
-    isStudent = (studentChoice == 'y');  // Determine if the user is a student
-
-    foodCourt.getInputs();  // Get the user's input for the order
-    foodCourt.printBill(isStudent);  // Print the detailed bill
-
-    return 0;
+    foodCourt.printBill(isStudent);  // Print the final bill with tax and optional tip
+    return 0;  // End of program
 }
