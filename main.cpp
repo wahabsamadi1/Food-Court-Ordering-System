@@ -16,9 +16,26 @@ private:
     vector<float> prices = {8.25, 9.75, 9.25, 8.99, 9.95};
     vector<int> quantities = {0, 0, 0, 0, 0};  // Holds quantities of each menu item ordered
 
+    // Log file to store activity and errors
+    string logFileName = "activity_log.txt";
+    string billFileName = "bill.txt";  // File to store the bill
+
+    // Function to log activity or errors
+    void logActivity(string message) {
+        ofstream logFile(logFileName, ios::app);  // Open the log file in append mode
+        if (logFile.is_open()) {
+            logFile << message << endl;  // Write message to the log file
+            logFile.close();  // Close the file after writing
+        } else {
+            cout << "Error opening log file!" << endl;  // If file can't be opened
+        }
+    }
+
 public:
     // Function to display the food court menu with item numbers, names, and prices
     void displayMenu() {
+        logActivity("Displayed the menu.");  // Log the activity of displaying the menu
+
         cout << "\n=====================================================" << endl;
         cout << "        Welcome to Ohlone College Food Court";
         cout << "\n=====================================================\n" << endl;
@@ -43,6 +60,8 @@ public:
 
     // Function to get the user's menu choices and their respective quantities
     void getInputs() {
+        logActivity("Started taking user input for menu choices.");  // Log when user input starts
+
         int choice, quantity;
         while (true) {
             // Prompt user for menu choice or 0 to finish
@@ -54,6 +73,7 @@ public:
                 cin.clear();  // Clear input error flag
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
                 cout << "Invalid choice! Please choose a number between 1 and 5." << endl;
+                logActivity("User entered an invalid choice.");  // Log invalid choice
             } 
             else if (choice == 0) {
                 break;  // Exit input loop if user selects 0 (finish)
@@ -68,17 +88,23 @@ public:
                     cin.clear();  // Clear input error flag
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
                     cout << "Invalid quantity! Please enter a non-negative number." << endl;
+                    logActivity("User entered an invalid quantity.");  // Log invalid quantity
                 } 
                 else {
                     // Update the quantity of the selected item
                     quantities[choice - 1] += quantity;
+                    logActivity("User ordered " + to_string(quantity) + " of " + menuItems[choice - 1] + ".");  // Log order
                 }
             }
         }
+
+        logActivity("Finished taking user input for menu choices.");  // Log when input ends
     }
 
     // Function to calculate the total cost of items ordered (without tax)
     float calculateBill() {
+        logActivity("Calculating total bill before tax.");  // Log when bill calculation starts
+
         float totalCost = 0.0;
         // Sum up the total cost based on quantities and prices
         for (int i = 0; i < menuItems.size(); ++i) {
@@ -89,6 +115,8 @@ public:
 
     // Function to calculate tax based on whether the user is a student or not
     float calculateTax(float totalCost, bool isStudent) {
+        logActivity("Calculating tax based on user status.");  // Log tax calculation
+
         if (isStudent) {
             return 0;  // No tax for students
         } else {
@@ -98,6 +126,8 @@ public:
 
     // Function to print the detailed bill including items, taxes, and optional tips
     void printBill(bool isStudent) {
+        logActivity("Printing bill.");  // Log the printing of the bill
+
         float totalCost = calculateBill();  // Get the total bill before tax
         float tax = calculateTax(totalCost, isStudent);  // Calculate tax based on student status
         float totalCostAfterTax = totalCost + tax;  // Total cost including tax
@@ -119,6 +149,7 @@ public:
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
                 cout << "Invalid tip amount! Setting tip to $0." << endl;
                 tip = 0;  // Default to no tip if invalid input is provided
+                logActivity("User entered an invalid tip amount.");  // Log invalid tip
             }
         }
 
@@ -129,7 +160,7 @@ public:
         srand(time(0));  // Seed random number generator
         int billNumber = rand() % 1001 + 1000;  // Generate a random number between 1000 and 2000
 
-        // Print bill details
+        // Print bill details to the console
         cout << "\n=====================================================" << endl;
         cout << "                         BILL";
         cout << "\n=====================================================\n" << endl;
@@ -148,77 +179,72 @@ public:
         // Loop through the ordered items and display them on the bill
         for (int i = 0; i < menuItems.size(); ++i) {
             if (quantities[i] > 0) {
-                cout << left << setw(25) << menuItems[i]  // Item name
-                     << left << setw(8) << quantities[i]  // Quantity ordered
-                     << right << setw(15) << fixed << setprecision(2) << "$" << prices[i] * quantities[i] << endl;  // Price for that item
+                cout << left << setw(25) << menuItems[i]
+                     << left << setw(8) << quantities[i]
+                     << right << setw(16) << fixed << setprecision(2) << "$" << prices[i] * quantities[i] << endl;
             }
         }
 
-        // Print summary of bill including total, tax, and tip
-        cout << "-----------------------------------------------------" << endl; 
-        cout << "\nTotal before tax: $" << fixed << setprecision(2) << totalCost << endl;
-        cout << "Tax Amount: $" << fixed << setprecision(2) << tax << endl;
-        cout << "Total price after tax: $" << fixed << setprecision(2) << totalCostAfterTax << endl;
+        // Print totals, tax, and tip
+        cout << "-----------------------------------------------------" << endl;
+        cout << right << setw(40) << "Subtotal: $" << fixed << setprecision(2) << totalCost << endl;
+        cout << right << setw(40) << "Tax: $" << fixed << setprecision(2) << tax << endl;
+        cout << right << setw(40) << "Tip: $" << fixed << setprecision(2) << tip << endl;
+        cout << right << setw(40) << "Total: $" << fixed << setprecision(2) << finalTotal << endl;
+        cout << "\n=====================================================" << endl;
 
-        // Print tip section if applicable
-        if (tip > 0) {
-            cout << "Tip Amount: $" << fixed << setprecision(2) << tip << endl;
-        }
+        // Save bill to a file (bill.txt)
+        ofstream billFile(billFileName);  // Open bill file
+        if (billFile.is_open()) {
+            billFile << "Bill Number: " << billNumber << endl;
+            billFile << "\nOhlone College Food Court\n";
+            billFile << "Address: 43600 Mission Blvd, Fremont, CA 94539\n";
+            billFile << "Phone: (510) 659-6000\n";
+            billFile << "-----------------------------------------------------\n";
+            billFile << left << setw(25) << "Item"
+                     << left << setw(8) << "Quantity"
+                     << right << setw(20) << "Price" << endl;
+            billFile << "-----------------------------------------------------\n";
 
-        cout << "-----------------------------------------------------" << endl; 
-        cout << "Total after tip: $" << fixed << setprecision(2) << finalTotal << endl;
-
-        cout << "\nThank you for dining with us!" << endl;
-        cout << "Please come again soon!" << endl;
-
-        // Save the bill to a text file for record-keeping
-        string fileName = to_string(billNumber) + ".txt";  // Generate filename using the bill number
-        ofstream outFile(fileName);  // Open file for writing
-
-        // Write bill details to file
-        outFile << "\nOhlone College Food Court" << endl;
-        outFile << "Address: 43600 Mission Blvd, Fremont, CA 94539" << endl;
-        outFile << "Phone: (510) 659-6000" << endl;
-        outFile << "-----------------------------------------------------" << endl;
-        outFile << "Bill Number: " << billNumber << endl;
-        outFile << "-----------------------------------------------------" << endl;
-
-        // Loop through items again to save details to the file
-        for (int i = 0; i < menuItems.size(); ++i) {
-            if (quantities[i] > 0) {
-                outFile << left << setw(25) << menuItems[i]
-                        << left << setw(8) << quantities[i]
-                        << right << setw(15) << fixed << setprecision(2) << "$" << prices[i] * quantities[i] << endl;
+            // Write ordered items to the bill file
+            for (int i = 0; i < menuItems.size(); ++i) {
+                if (quantities[i] > 0) {
+                    billFile << left << setw(25) << menuItems[i]
+                             << left << setw(8) << quantities[i]
+                             << right << setw(16) << "$" << fixed << setprecision(2) << prices[i] * quantities[i] << endl;
+                }
             }
-        }
-        outFile << "-----------------------------------------------------" << endl;
-        outFile << "Total before tax: $" << fixed << setprecision(2) << totalCost << endl;
-        outFile << "Tax Amount: $" << fixed << setprecision(2) << tax << endl;
-        outFile << "Total price after tax: $" << fixed << setprecision(2) << totalCostAfterTax << endl;
-        if (tip > 0) {
-            outFile << "Tip Amount: $" << fixed << setprecision(2) << tip << endl;
-        }
-        outFile << "Total after tip: $" << fixed << setprecision(2) << finalTotal << endl;
-        outFile << "\nThank you for dining with us! Please come again soon!" << endl;
 
-        outFile.close();  // Close the file after writing
+            // Write totals to the bill file
+            billFile << "-----------------------------------------------------\n";
+            billFile << right << setw(40) << "Subtotal: $" << fixed << setprecision(2) << totalCost << endl;
+            billFile << right << setw(40) << "Tax: $" << fixed << setprecision(2) << tax << endl;
+            billFile << right << setw(40) << "Tip: $" << fixed << setprecision(2) << tip << endl;
+            billFile << right << setw(40) << "Total: $" << fixed << setprecision(2) << finalTotal << endl;
+            billFile << "\n=====================================================\n";
+            billFile.close();  // Close bill file
+        } else {
+            cout << "Error writing to the bill file!" << endl;  // Log error if file can't be written
+            logActivity("Error writing to the bill file.");  // Log the error
+        }
     }
 };
 
-// Main function that initiates the food ordering process
+// Main function to control the flow of the program
 int main() {
-    FoodCourt foodCourt;  // Create an instance of the FoodCourt class
+    FoodCourt foodCourt;
+
     foodCourt.displayMenu();  // Display the menu to the user
-    foodCourt.getInputs();  // Get user's menu choices and quantities
+    foodCourt.getInputs();   // Get user's menu choices and quantities
 
-    char isStudentInput;
-    bool isStudent;
-    // Ask the user if they are a student (for tax exemption)
+    // Ask if the user is a student to determine tax
+    char isStudentChar;
     cout << "\nAre you a student? (y/n): ";
-    cin >> isStudentInput;
-    // Determine student status based on user's response
-    isStudent = (isStudentInput == 'y' || isStudentInput == 'Y');
+    cin >> isStudentChar;
+    bool isStudent = (isStudentChar == 'y' || isStudentChar == 'Y');
 
-    foodCourt.printBill(isStudent);  // Print the final bill with tax and optional tip
-    return 0;  // End of program
+    // Print the bill and save it to a file
+    foodCourt.printBill(isStudent);
+
+    return 0;
 }
