@@ -1,4 +1,4 @@
-# Food Court Ordering and Billing System
+## Food Court Ordering and Billing System
 
 ### Overview
 This project is a C++ program that simulates the ordering and billing system of a food court at Ohlone College. It allows users to select items from a menu of burgers, specify quantities, calculate the total price (including tax and optional tips), and generate a detailed bill. The bill is printed to the console and also saved as a text file for record-keeping.
