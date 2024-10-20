@@ -145,7 +145,7 @@ To compile and run this program, you will need:
      │
      ├── main.cpp            # Main source code for the food court system
      ├── README.md           # This README file
-     ├── program.log         # Log file for tracking events and errors
+     ├── Activity_log.txt    # Log file for tracking events and errors
      └── <bill-number>.txt   # A bill file generated after each run
 
 
