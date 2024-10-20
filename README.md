@@ -155,6 +155,7 @@ To compile and run this program, you will need:
 + Multiple Payment Options: Adding support for various payment methods, like credit cards or digital wallets.
 + GUI Version: Converting the text-based program into a graphical user interface (GUI) for easier use.
 + Enhanced Logging: Implementing more detailed error handling and logging mechanisms.
++ Unit Testing: Implementing unit tests to validate the functionality of the system (e.g., GoogleTest for verifying correct bill calculation, input handling, and logging).
   
 ### Author
 Wahab Samadi
